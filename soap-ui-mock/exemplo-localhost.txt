@@ -1,0 +1,9 @@
+
+Para criar um projeto basico no SOAP UI
+no format REST ou SOAP, veja esta video aula abaixo.
+
+SOAP UI TUTORIAL [https://www.youtube.com/watch?v=L2SMZ9bbDvE]
+
+Após criar será possivel acessar simplesmente usando por exemplo:
+http:\\localhost:8080\student
+
