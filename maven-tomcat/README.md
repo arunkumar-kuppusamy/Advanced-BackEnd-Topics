@@ -68,6 +68,16 @@ Esta configuração atende Java 7 e Tomcat 7
 </build>
 ```
 
+No tutorial acima ele da algumas dicas importantes como
+> Run Configurations - Criar um Build Maven customizado, para o ***tomcat7:run -X***, ao clicar em workspace ele busque o projeto e ele cria a url do campo.
+![tomcat7:run -X](http://o7planning.org/en/10133/cache/images/i/8542.png)
+
+> Console Eclipse - Veja a url e a porta que ele gerou, teste!
+![Uri raiz do projeto](http://o7planning.org/en/10133/cache/images/i/8548.png)
+
+> Atalho foi criado para rodar a aplicação, use!
+![Atalho para Run](http://o7planning.org/en/10133/cache/images/i/8560.png)
+
 
 
 
