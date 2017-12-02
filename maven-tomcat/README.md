@@ -1,11 +1,11 @@
 # MAVEN + TOMCAT EMBARCADO
 
 
-Comentários: [README.MD](https://guides.github.com/features/mastering-markdown/)
+Comentários: [README.MD - https://guides.github.com/features/mastering-markdown/](https://guides.github.com/features/mastering-markdown/)
 
 Utilize este tutorial como howtodo
 
-http://o7planning.org/en/10133/run-maven-java-web-application-in-tomcat-maven-plugin
+***http://o7planning.org/en/10133/run-maven-java-web-application-in-tomcat-maven-plugin***
 
 Saiba que:
 * A versão do Java e do Tomcat, precisa ter suporte aos plugins e dependecias do Maven
@@ -37,7 +37,7 @@ Esta configuração atende Java 7 e Tomcat 7
 	provavel que tenha jar duplicados e pela quantidade o Maven se perdeu no Ruindows.
 	
 * Para funcionar o TOMCAT EMBARCADO COM MAVEN
-> A Dependência
+> **A Dependência**
 ```html
 <dependency>
 	<groupId>org.apache.tomcat.maven</groupId>
@@ -46,7 +46,7 @@ Esta configuração atende Java 7 e Tomcat 7
 	<scope>provided</scope>
 </dependency>
 ```
-> O plugin
+> **O plugin**
 ```xml
 <build>
 	<plugins>
@@ -68,14 +68,19 @@ Esta configuração atende Java 7 e Tomcat 7
 </build>
 ```
 
+
 No tutorial acima ele da algumas dicas importantes como
-> Run Configurations - Criar um Build Maven customizado, para o ***tomcat7:run -X***, ao clicar em workspace ele busque o projeto e ele cria a url do campo.
+
+> Run Configurations - Criar um Build Maven customizado, para o ***tomcat7:run -X***, ao clicar em ***Browse Workspace*** ele busque o projeto e ele cria a url do campo **Base Directory**
+
 ![tomcat7:run -X](http://o7planning.org/en/10133/cache/images/i/8542.png)
 
 > Console Eclipse - Veja a url e a porta que ele gerou, teste!
+
 ![Uri raiz do projeto](http://o7planning.org/en/10133/cache/images/i/8548.png)
 
 > Atalho foi criado para rodar a aplicação, use!
+
 ![Atalho para Run](http://o7planning.org/en/10133/cache/images/i/8560.png)
 
 
