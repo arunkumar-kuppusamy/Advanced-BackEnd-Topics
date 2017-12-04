@@ -4,7 +4,7 @@
 
 > Na classe Main, crie um EndPoint
 
-```
+```javascript
 import javax.xml.ws.Endpoint;
 public static void main(String[] args) {
 	EstoqueWS service = new EstoqueWS();
@@ -14,7 +14,7 @@ public static void main(String[] args) {
 	
 > Webservice - Crie um que retorne uma List
 
-```
+```javascript
 @WebService
 public class EstoqueWS {
 	@WebMethod(operationName="todosOsItens")
@@ -28,7 +28,7 @@ public class EstoqueWS {
 	
 > XmlRoot - Anote as classes que serão as raizes da resposta Jax-WS
 	
-```
+```javascript
 import javax.xml.bind.annotation.XmlRootElement;
 //...
 @XmlRootElement
@@ -45,7 +45,7 @@ public class Item {
 
 > DAO - Criamos um para gerar dados para nossa aplicacao, futuramente deve vir de um banco de dados ***nenhuma anotacao necessaria***
 	
-```
+```javascript
 public class ItemDao {
 
 	private static Map<String, Item> ITENS = new LinkedHashMap<>();
@@ -98,4 +98,7 @@ public class ListaItens {
 }
 ```
 
+Sempre atualilzar o SOAPUI, ao mudar XmlRoots do projeto, ou definicoes importantes
+
+!()[https://thewonggei.files.wordpress.com/2010/12/reload-wsdl2.png]
 	
