@@ -98,7 +98,7 @@ public class ListaItens {
 }
 ```
 
-Sempre atualilzar o SOAPUI, ao mudar XmlRoots do projeto, ou definicoes importantes
+_Sempre atualilzar o SOAPUI, ao mudar XmlRoots do projeto, ou definicoes importantes_
 
-!()[https://thewonggei.files.wordpress.com/2010/12/reload-wsdl2.png]
+![](ttps://thewonggei.files.wordpress.com/2010/12/reload-wsdl2.png)
 	
