@@ -85,5 +85,33 @@ No tutorial acima ele da algumas dicas importantes como
 
 
 
+----------------------------------------------
 
+#### *MAIS ANOTACOES SOBRE MAVEN*
+
+- Criar um dynamic
+
+- Converter para maven project ( ***groupId é as pastas***, ***artifactId é o contexto***, geralmente o nome do projeto )
+	
+	_buildName_ da para mudar apenas o nome do war que ele gera, e é chato porque tem que reinicar o eclipse para ele regerar
+	
+- Ele criou um pom, edite-o como preferir, se o pom nao comecar a baixar as dependencias automaticamente a cada build
+
+	de um Maven Install e veja os erros comigo, ocorreu porque escrevi depende**N***cies errado, e indicou no Install somente
+
+- Para rodar o projeto nao esqueca de configurar com ***tomcat7:run -X*** e ***apontar para o projeto workspace***, o maven nao configura sozinho somente dando um Run As.
+
+- Pode ocorrer erros porque jar duplicado _apague a pasta _.m2/repository_ e reinicie o IDE
+
+	baixando todas as dependecias novamente, funcionou novamente para min fazer isso.
+
+- Aplicacao somente estará disponivel no Run As, e nao no _Maven Install que apenas cria o pacote_
+
+	para se certificar ele tem que ter criado a url procure por
+	
+		 _[INFO] Running war on http://localhost:8089/cxf/_
+
+	para que ele log tudo certo tambem é preciso adicionar o junit no contexto
+	
+----------------------------------------------
 
