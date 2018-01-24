@@ -1,0 +1,14 @@
+<script>
+var string = "João Appolinário";
+
+function quote(string) {
+	var decimal = "";
+	for(j = 0; j < string.length; j++) {
+		decimal += "&#"+string.charCodeAt(j)+";";
+		console.log(j+"\t"+string.charAt(j)+"\t"+"&"+string.charCodeAt(j)+";"+"\t"+string.substring(j+1,-1));
+	}
+	return decimal;
+}	
+		
+console.log(quote(string));
+</script>
