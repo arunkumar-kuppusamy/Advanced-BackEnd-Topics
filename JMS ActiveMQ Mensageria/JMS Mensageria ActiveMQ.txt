@@ -1,0 +1,405 @@
+JMS Mensageria ActiveMQ.
+
+Instalando:
+Baixamos o ActiveMQ 5.12.x (ou mais recente) em http://activemq.apache.org/download.html.
+
+Observação: No Windows é preciso executar o script INSTALLSERVICE.BAT da pasta win32 ou win64 dependendo da arquitetura do computador.
+
+Rodando:
+Acesse a pasta apache-activemq-5.12.2/bin
+
+e execute o comando, incluindo o console para ver os logs
+
+sh activemq console
+
+
+Acessando:
+No log procure o ip de acesso.
+http://localhost:8161
+http://localhost:8161/admin O login e senha padrão são admin-admin.
+
+Criar a primeira fila
+Inclua um nome por exemplo fila.financeiro e clique em Create.
+Na caixa “Message Body” vamos escrever: Oi mundo mensageria!
+Clique em Send.
+
+Uma mensagem foi enviada, ela está enqueued. Isso signiica que a fila recebeu e guardou, salva. Que tal enviarmos mais uma mensagem? Dessa vez será “Oi! Mensageria segunda mensagem”. As mensagem ficam enqueued, mas nenhum foi entregue pois ainda não temos um consumidor.
+
+
+No jar fornecido pelo Alura para esse curso acesso as mensagens com
+java –cp activemq-all-5.12.0.jar:aula-jms.jar br.com.caelum.TesteMensageria consome
+java –cp activemq-all-5.12.0.jar;aula-jms.jar br.com.caelum.TesteMensageria envia 10
+
+
+
+-----------------------------------------------
+***** JMS 1.1 ****
+Estamos usando o JMS na versão 1.1 mas já existe uma atualização do padrão para a versão 2.0 que faz parte do Java EE 7.
+No entanto, a grande maioria dos MOMs no mercado trabalham ainda com essa versão 1.1. Com ActiveMQ isso não é diferente e tudo funciona ainda com JMS 1.1.
+	Vimos os passos para criar um MessageConsumer com JMS 1.1:
+		ConnectionFactory -> Connection  -> Session -> MessageConsumer
+	No JMS 2.0 o desenho seria um pouco mais simples pois foi introduzido uma nova interface JMSContext que combina o trabalho da Connection e Session:
+		ConnectionFactory -> JMSContext -> JMSConsumer
+	http://********/a-nova-api-do-jms-2-0-no-java-ee-7/
+
+1) Para isso vamos criar um novo projeto Java no Eclipse com o nome jms.
+2) Copie o JAR activemq-all-5.12.0.jar da instalação do ActiveMQ para o projeto jms e adicione este JAR no classpath.
+3) Adicione a pasta lib no BuildPath do project.
+
+
+3) Crie um arquivo na pasta src/jndi.properties ou seja no BuildPath
+Cole o arquivo padrao existente na documento do ActiveMQ
+
+		java.naming.factory.initial = org.apache.activemq.jndi.ActiveMQInitialContextFactory
+		# use the following property to configure the default connector
+		# MODIFIQUE PARA A PORTA TCP DESCRITA NO CONSOLE DO ActiveMQ.
+	>>>>java.naming.provider.url = tcp://localhost:61616
+
+		# use the following property to specify the JNDI name the connection factory
+		# should appear as. 
+		#connectionFactoryNames = connectionFactory, queueConnectionFactory, topicConnectionFactry
+		# register some queues in JNDI using the form
+		# queue.[jndiName] = [physicalName]
+		# MODIFIQUE PARA UM NOME DE FILA QUE POSSA IDENTIFICAR MELHOR SUA FILA.
+	>>>>queue.MINHA_FILA_FINANCEIRA = fila.financeiro
+
+		# register some topics in JNDI using the form
+		# topic.[jndiName] = [physicalName]
+		topic.MyTopic = example.MyTopic
+
+Vimos no video que é possível subir o ActiveMQ a partir de uma aplicação Java.
+	Para isso basta alterar o arquivo jndi.properties para VIRTUAL MACHINA VM://
+	#java.naming.provider.url = tcp://hostname:61616
+	java.naming.provider.url = vm://localhost
+	Quando rodamos o código com a configuração vm://localhost deve aparece no console do Eclipse as seguintes informações:
+		 INFO | Connector vm://localhost started
+	Subimos o ActiveMQ junto com nossa aplicação.
+	Isso pode ser útil quando queremos ter as vantagens do MOM dentro de uma aplicação web, por exemplo, sem precisar manter uma instância separada do ActiveMQ.
+
+		
+4) No projeto jms, na pasta src crie um nova classe TesteConsumidor.
+Use a seguinte ordem ConnectionFactory --> Connection --> Session --> MessageConsumer
+
+	//imports do package javax.jms
+	public class TesteConsumidor {
+
+		public static void main(String[] args) throws Exception{
+
+			//Contexto inicial para acessar o JNDI - Banco de dados em memória
+			//O JMS segue o mesmo padrão de projeto Observer! A diferença é que JMS é remoto ou distribuído. Ou seja, no padrão Observer originalmente descrito no livro GOF, tudo acontece na memória, o Observer desacopla objetos. Com JMS, a comunicação entre Producer e Consumer é remota, desacoplamento arquitetural.
+			InitialContext context = new InitialContext(); 
+
+			//Cria uma conexao atravez de um pattern Factory
+			//A documentacao te diz qual o nome padrao do Factory neste caso é ConnectionFactory
+			ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+			Connection connection = factory.createConnection();
+			connection.start();
+
+			//A Session no JMS abstrai o trabalho transacional e confirmação do recebimento da mensagem.
+			//podemos usar a session para session.commit(), session.rollback();
+			//AUTO_ACKNOWLEDGE - Automaticamente confirme o recebimento da mensagem, envie um ACK por TCP, pex.
+			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			//Destination É o lugar concreto onde a mensagem será salvo dentro do MOM.
+			Destination fila = (Destination) context.lookup("financeiro");//no JNDI queue.MyQueue
+			
+			//Tenho uma fila que me envia uma mensagem quando ela esta ativa
+			//Ou seja o software me enviou estou ativo e posso processar seu produto agora, me envie os dados.
+			MessageConsumer consumer = session.createConsumer(fila);//destination
+			Message message = consumer.receive();//abstraia em uma string recebida.
+			//Nesse exemplo a execução vai ficar parado por 10 segundos. Após 10s sem receber nenhuma mensagem o método receive devolve null e a execução continua normalmente.
+			//https://docs.oracle.com/javaee/7/api/javax/jms/MessageConsumer.html#receive-long-
+			//Message message = consumer.receive(10000); //definindo o timeout em milli segundos
+			System.out.println("Recebendo msg: "+ message);
+
+			//Somente para a aplicacao sair sem esperar a fila chegar, podemos definir via timeout também.
+			new Scanner(System.in).nextLine(); //parar o programa para testar a conexao
+
+			session.close();
+			connection.close();
+			context.close();
+		}
+
+	}
+
+-----------------------------------------------------
+Você também pode criar um consumidor especifico para uma fila. Veja o código usando a interface Queue*:
+
+	package br.com.caelum.consumer.queue;
+
+	import javax.jms.Message;
+	import java.util.Scanner;
+	import javax.jms.Queue;
+	import javax.jms.QueueConnection;
+	import javax.jms.QueueConnectionFactory;
+	import javax.jms.QueueReceiver;
+	import javax.jms.QueueSession;
+	import javax.jms.Session;
+	import javax.naming.InitialContext;
+
+	public class QueueReceiverTest {
+
+		public static void main(String[] args) throws Exception {
+			InitialContext ctx = new InitialContext();
+			QueueConnectionFactory cf = (QueueConnectionFactory)ctx.lookup("ConnectionFactory");
+			QueueConnection conexao = cf.createQueueConnection();
+			conexao.start();
+
+			QueueSession sessao = conexao.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+			Queue fila = (Queue) ctx.lookup("financeiro");
+			QueueReceiver receiver = (QueueReceiver) sessao.createReceiver(fila );
+
+			Message message = receiver.receive();
+			System.out.println(message);
+
+			new Scanner(System.in).nextLine();
+
+			sessao.close();
+			conexao.close();    
+			ctx.close();
+		}
+	}
+
+	
+Normalmente usa-se as interfaces mais genéricas que funcionam com qualquer destino, não só Queue. Como veremos existem outros destinos.
+
+Além disso, a interface QueueReceiver só possui um método a mais, o getQueue() que é pouco útil.
+
+Queue q = receiver.getQueue(); //única diferença entre MessageConsumer e QueueReciever
+	
+-----------------------------------------------------
+
+Podemos modificar o consumidor para receber mensagens diferentes de uma String
+
+		MessageConsumer consumer = session.createConsumer(fila );
+
+		consumer.setMessageListener(new MessageListener() {
+			@Override
+			public void onMessage(Message message) {
+
+				TextMessage textMessage = (TextMessage)message;
+
+				try {
+					System.out.println(textMessage.getText());
+				} catch (JMSException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		new Scanner(System.in).nextLine();
+		session.close();
+
+
+-----------------------------------------------------
+
+Vamos criar um código que vai produzir mensagens para serem enviadas.
+
+Como a fila funciona? Ela entrega as mensagens apenas para um consumidor. Quando chega a mensagem, se há dois consumidores online (como no nosso caso) essa mensagem é entregue apenas para um dos dois (e nunca para os dois). Isso que o ActiveMQ faz é o que chamamos de balanceamento de carga.
+
+Logo Não espere que se tiver varias pessoas esperando pela mesma fila ela ira sempre priorizar um.
+Se tivermos 3 consumidores a fila vai entregar aos poucos para cada um, e nunca repetido, ao entregar ela se livra de ter que enviar novamente, libera da memoria e perde o dado, o consumidor tem que guardar e fazer algo.
+
+COMPETING CONSUMERS - No mundo de padrões de integração esse modelo de entrega se chama :
+http://www.enterpriseintegrationpatterns.com/patterns/messaging/CompetingConsumers.html
+
+//O objeto Session do JMS (javax.jms.Session) é o objeto responsável pela criação de diversos componentes do JMS como Producer, Consumer, Browser e implementações de Message.
+Session pode criar diversos fluxos: createBrowser(), createProducer() , createConsumer() , createMessage()
+
+		MessageProducer producer = session.createProducer(fila);
+
+		for(int i = 0; i < 1000; i ++) { 
+		
+			Message message = session.createTextMessage("<pedido><id>" + i + "</id></pedido>");
+			producer.send(message);
+		}
+
+
+-----------------------------------------------------
+Vamos testar de forma distribuida com dois computadores
+
+No arquivo jndi.properties, vamos editar o java.naming.provider.url, substituindo localhost pelo ip 192.168.0.208 (edite de acordo com o seu ip):
+java.naming.provider.url = tcp://192.168.0.208:61616
+Cada projeto vai colocar o IP do Producer de Mensagens do código que vai gerar as mensagem e não de quem vai consumir.
+
+
+Em Java temos uma classe que representa arquivos de propriedades: a classe Properties. E podemos usá-la para configurar o contexto do JNDI no lugar do arquivo jndi.properties. Para isso, crie uma instância de Properties:
+E adicione as mesmas propriedades do arquivo jndi.properties:
+
+	Properties properties = new Properties();
+	properties.setProperty("java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
+
+	properties.setProperty("java.naming.provider.url", "tcp://192.168.0.94:61616");
+	properties.setProperty("queue.financeiro", "fila.financeiro");
+
+	InitialContext context = new InitialContext(properties);
+
+-- VENDO AS MENSAGENS SEM TIRAR DA FILA, SEM CONSUMILAS
+
+Dependendo da nossa aplicação, podemos precisar apenas checar (monitoramento) as mensagens que chegaram para uma determinada fila sem consumi-la. Ou seja, apenas queremos ver sem tirá-las da fila. Para isso podemos usar um componente do JMS chamado QueueBrowser, usado para navegar sobre as mensagens sem consumi-las.
+
+Para criar um QueueBrowser usaremos a Session:
+		Destination fila = (Destination) context.lookup("financeiro");        
+		QueueBrowser browser = session.createBrowser((Queue) fila);
+
+Usando o QueueBrowser, como podemos visualizar as mensagens?
+		Enumeration msgs = browser.getEnumeration();
+		while (msgs.hasMoreElements()) { 
+			TextMessage msg = (TextMessage) msgs.nextElement(); 
+			System.out.println("Message: " + msg.getText()); 
+		}
+
+-----------------------------------------------------
+BROADCAST - Modelo de entrega em Topicos e não Queues - Outra aba no ActiveMQ
+
+
+1) Crie um topic no ActiveMQ
+	http://localhost:8161/admin/topics.jsp
+	
+2) Configure o jndi.properties para o topic
+	#topic.MyTopic = example.MyTopic
+	topic.loja = topico.loja
+
+3) Edite o Destination , tanto no Consumer quanto no Producer, identicamente.
+		context.lookup("loja");
+		//se tivesse outro consumir context.lookup("estoque");
+	
+Topico não sabe quantos consumidores vão consumir, tem que dizer para ele que eu estou ativo para receber.	
+4) Mude o Destination para Topic	
+	Topic topico = (Topico) context.lookup("loja");
+		//outro consumir ok vai consumir o mesmo topico, geral para varios via broadcast
+	
+5) Crie uma conexao com um nome ID para esta conexao
+	connection.setClientID("estoque");
+
+6) Crie um MessageConsumer com uma assinatura, Topico com identificacao
+		MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura");
+
+-- CODIGO FINAL PARA O PRODUTOR DE Topicos
+
+		public class TesteProdutorTopico {
+
+			public static void main(String[] args) throws Exception {
+
+				InitialContext context = new InitialContext();
+				ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+
+				Connection connection = factory.createConnection();
+				connection.start();
+				Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+				Destination topico = (Destination) context.lookup("loja");
+				MessageProducer producer = session.createProducer(topico);
+
+				Message message = session.createTextMessage("<pedido><id>222</id></pedido>");
+				producer.send(message);
+
+				session.close();
+				connection.close();
+				context.close();
+			}
+		}		
+	
+--- CODIGO FINAL PARA DOIS CONSUMIDORES
+
+		public class TesteConsumidorTopico {
+
+			@SuppressWarnings("resource")
+			public static void main(String[] args) throws Exception {
+
+				InitialContext context = new InitialContext();
+				ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+
+				Connection connection = factory.createConnection(); 
+		>>>>>>>connection.setClientID("estoque");
+
+				connection.start();
+				Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+				Topic topico = (Topic) context.lookup("loja");
+
+				MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura");
+
+				consumer.setMessageListener(new MessageListener() {
+
+					@Override
+					public void onMessage(Message message) {
+
+						TextMessage textMessage = (TextMessage)message;
+
+						try {
+							System.out.println(textMessage.getText());
+						} catch (JMSException e) {
+							e.printStackTrace();
+						}
+					}
+
+				});
+
+
+				new Scanner(System.in).nextLine();
+
+				session.close();
+				connection.close();
+				context.close();
+			}
+		}
+
+
+		public class TesteConsumidorTopicoComercial {
+
+			@SuppressWarnings("resource")
+			public static void main(String[] args) throws Exception {
+
+				InitialContext context = new InitialContext();
+				ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+
+				Connection connection = factory.createConnection(); 
+		>>>>>>>>connection.setClientID("comercial");
+
+				connection.start();
+				Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+				Topic topico = (Topic) context.lookup("loja");
+
+				MessageConsumer consumer = session.createDurableSubscriber(topico, "assinatura");
+
+				consumer.setMessageListener(new MessageListener() {
+
+					@Override
+					public void onMessage(Message message) {
+
+						TextMessage textMessage = (TextMessage)message;
+
+						try {
+							System.out.println(textMessage.getText());
+						} catch (JMSException e) {
+							e.printStackTrace();
+						}
+					}
+
+				});
+
+
+				new Scanner(System.in).nextLine();
+
+				session.close();
+				connection.close();
+				context.close();
+			}
+		}
+
+
+Envia uma mensagem com o Producer Topic e veja que ambos receberam a mensagem assim que estiverem online.
+Recebem a mesma mensagem, diferente de Fila que entrega e desenfila, apaga da memória.
+
+Devemos identificar uma conexão com o método setClientId("clientId") e identificar o consumidor com o método createDurableSubscriber(topico,"nomeAssinatura").
+
+--------------------------------------------------------------
+
+O consumer quer consumir todas as mensagem, mas pode ter algum critério de rejeição/seleção de mensagem.
+
+
+
+
+
+
