@@ -1,6 +1,6 @@
 package oca;
 
-public class TestClass2 {
+public class TestClass1 {
 
 	public static void main(String[] args) {
 
