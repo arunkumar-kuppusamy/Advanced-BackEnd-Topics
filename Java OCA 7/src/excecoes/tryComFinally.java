@@ -1,9 +1,11 @@
 package excecoes;
 
 class NewException extends Exception {
+	private static final long serialVersionUID = 1L;
 }
 
 class AnotherException extends Exception {
+	private static final long serialVersionUID = 1L;
 }
 
 public class tryComFinally {

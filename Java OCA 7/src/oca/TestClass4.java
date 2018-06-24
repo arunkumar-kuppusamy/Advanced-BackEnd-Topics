@@ -1,11 +1,14 @@
 package oca;
 
-public abstract class TestClass4 {
-
-	abstract String abstrato() throws Throwable;
+public class TestClass4 {
 
 	public static void main(String[] args) {
 
+		
+		
+		
+		
+		
 	}
 
 }

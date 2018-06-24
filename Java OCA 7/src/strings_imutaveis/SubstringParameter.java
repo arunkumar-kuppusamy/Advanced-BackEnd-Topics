@@ -1,4 +1,4 @@
-package conjunto_strings;
+package strings_imutaveis;
 
 public class SubstringParameter {
 

@@ -13,7 +13,7 @@ public class OperadorTernario {
 
 		//int i = true ? 0 : 1;
 		//int i = false ? (true ? 0 : 1) : 2;
-		boolean i = (true ? true : (true ? true : false)) ? (true ? true : false) : (true ? true : false);
+		boolean i = (true ? true : (true ? true : false)) ? (true ? true : false) : (true ? true : false);//DeadCode em alguns pontos, mas ok compila
 		//boolean i = ((true ? true : true) ? true : false) ? (true ? true : false) : (true ? true : false);
 		System.out.println(i);
 		

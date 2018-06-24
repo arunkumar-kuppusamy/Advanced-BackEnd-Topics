@@ -27,7 +27,7 @@ package heranca;
 class A {
 	public static String a = " [A] ";
 	public String perform_work() {
-		return ("1<a em a> " + this.a);
+		return ("1<a em a> " + this.a);//this eh redundante
 	}
 }
 

@@ -24,7 +24,7 @@ public class AvalicaoCurtoCircuito {
 		//Se tivermos uma operacao durante a comparacao
 		//Operacao que pode ser de atribuicao, soma, decremento..........
 		int E=1;
-		if( false && (++E > 0) ) { System.out.println(E+"x"); }
+		if( false && (++E > 0) ) { System.out.println(E+"x"); }//DeadCode
 		System.out.println(E+"\n\n");//&& print 1, & print 2.
 		
 		

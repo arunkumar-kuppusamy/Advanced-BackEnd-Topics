@@ -1,4 +1,4 @@
-package oca;
+package interfaces;
 
 public abstract class ResumoClassesAbstratas {
 

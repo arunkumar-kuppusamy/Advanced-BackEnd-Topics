@@ -53,9 +53,10 @@ public class TesteDoAvaliador {
 	@Test
 	public void stringComecamCom() {
 
-		String s = "";
-		String s2 = "";
+		String s = "a";
+		String s2 = "a";
 		Assert.assertEquals(s, s2);//delta e o valor permitido de variancia
+		Assert.assertTrue("Ok 2 e igual a 2", 2==2);
 	}
 
 	
