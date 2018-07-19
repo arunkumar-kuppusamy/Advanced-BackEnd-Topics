@@ -1,0 +1,8 @@
+2018-07-14 16:02:16,760 [main] DEBUG (Principal.java:23) - Hello, my name is Homer Simpson.
+2018-07-14 16:02:16,762 [main] INFO  (Principal.java:24) - Mmmmmm .... Chocolate.
+2018-07-14 16:02:16,763 [main] WARN  (Principal.java:25) - Mmm...forbidden donut.
+2018-07-14 16:02:16,763 [main] ERROR (Principal.java:26) - YamYam...so delicious.
+2018-07-14 16:02:25,744 [main] DEBUG (Principal.java:23) - Hello, my name is Homer Simpson.
+2018-07-14 16:02:25,745 [main] INFO  (Principal.java:24) - Mmmmmm .... Chocolate.
+2018-07-14 16:02:25,745 [main] WARN  (Principal.java:25) - Mmm...forbidden donut.
+2018-07-14 16:02:25,746 [main] ERROR (Principal.java:26) - YamYam...so delicious.

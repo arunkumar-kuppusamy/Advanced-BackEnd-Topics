@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: MavenSimple
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: Casa
+Implementation-Vendor-Id: com.simple
+Build-Jdk: 1.8.0_171
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/MavenSimple
+Created-By: Maven Integration for Eclipse
+

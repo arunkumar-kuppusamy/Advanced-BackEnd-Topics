@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- A estrutura do arquivo de log não está no padrão correto. O nó [logger] está incorreto. A estrutura correta deve ser:  -->
+	
+	<define name="" class="" />
+	<define name="" class="" />
+	
+	<jmxConfigurator />
+	
+	<appender name="" class="">
+		<file></file>
+		<encoder>
+			<pattern></pattern>
+		</encoder>
+		<rollingPolicy class="">
+			<FileNamePattern></FileNamePattern>
+			<TimeBasedFileNamingAndTriggeringPolicy class="">
+				<MaxFileSize></MaxFileSize>
+			</TimeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+	
+	<logger name="" level="" />
+	<logger name="" level="" />
+	<logger name="" level="" />
+	<logger name="" level="" />
+	<logger name="" level="" />
+	
+	<root level="">
+		<appender-ref ref="" />
+	</root>
+	
+</configuration> 

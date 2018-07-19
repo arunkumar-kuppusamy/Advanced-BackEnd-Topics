@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<define name="applicationName" class="br.com.bradseg.bsad.framework.core.logging.utils.ApplicationPropertyDefiner" />
+	<define name="targetPath" class="br.com.bradseg.bsad.framework.core.logging.utils.LogTargetPathPropertyDefiner" />
+	<define name="targetPathGLog" class="br.com.bradseg.mobi.bradescoseguroscelular.mobile.log.GLogFileServer" />
+
+	<jmxConfigurator />
+	
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${targetPath}/${applicationName}.log</file>
+		<encoder>
+			<pattern>%-40(%d{ISO8601} [%thread]) ${applicationName} %-5level %-60logger - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${targetPath}/${applicationName}-%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+			<TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<MaxFileSize>10MB</MaxFileSize>
+			</TimeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+	
+	<appender name="log-negocio" class="br.com.bradseg.mobi.bradescoseguroscelular.mobile.log.MobileSegurosRollingFileAppender">
+		<file>${targetPathGLog}/MOBI_NEGOCIO</file>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd-HH.mm.ss.SSS000}\t%msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${targetPathGLog}/MOBI_NEGOCIO%d{yyyyMMdd}.log</fileNamePattern>
+		</rollingPolicy>
+		<tipoLog>00002</tipoLog>
+	</appender>
+
+	<appender name="log-navegacao" class="br.com.bradseg.mobi.bradescoseguroscelular.mobile.log.MobileSegurosRollingFileAppender">
+		<file>${targetPathGLog}/MOBI_NAVEGACAO</file>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd-HH.mm.ss.SSS000}\t%msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${targetPathGLog}/MOBI_NAVEGACAO%d{yyyyMMdd}.log</fileNamePattern>
+		</rollingPolicy>
+		<tipoLog>00001</tipoLog>
+	</appender>
+	
+	<logger name="org.apache" level="INFO" />
+	<logger name="com.opensymphony" level="INFO" />
+	<logger name="org.springframework" level="INFO" />
+	<logger name="br.com.bradseg.bsad.framework" level="INFO" />
+	<logger name="br" level="INFO" />
+
+	<logger name="LoggerNegocio" level="INFO" additivity="false">
+		<appender-ref ref="log-negocio"/>
+	</logger>
+	
+	<logger name="LoggerNavegacao" level="INFO" additivity="false">
+		<appender-ref ref="log-navegacao"/>
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="FILE" />
+	</root>
+
+			<!-- Log de negocio: Conterá as informações de todas as operações e consultas realizadas pela aplicação em sistemas externos e na base local, 
+			com foco no negócio, para atendimento das requisições do cliente.  -->
+			<!-- Permitirá extrair estatísticas de acessos e de volume financeiro operado. Permitirá ainda identificar a causa de erros 
+			apresentados aos clientes em situações de exceção, códigos retornados por sistemas externos (p.ex. transações mainframe), etc -->
+			<!-- Log de navegacao: Conterá apenas os registros do tipo “PAGINA”, de layout padronizado, com toda a navegação do cliente, 
+			logando inclusive mensagens disponibilizadas em tela em casos de erro. Os registros têm como finalidade a rastreabilidade das ações do cliente. -->
+			<!-- TODO MOCK REMOVER EM PRODUCAO -->
+				<!-- BEGIN LOGGING IN A FILE -->
+				<!-- 
+					NAO ESQUECER DE CONFIGURAR O NIVEL DE LOG NO [[[WEBSPHERE]]] NA CHAVE
+					NOMENCLATURA > LIGACAO DO ESPACO NOMES > CRIAR UMA NOVA CELULA  str/BSAD-LogLevel/application-name/
+					VALOR PODE SER DEBUG, INFO, WARN OU ERROR, se a chave nao for criada o default sera sempre ERROR.
+				-->
+					<appender name="log-desenvolvimento" class="ch.qos.logback.core.rolling.RollingFileAppender">
+						<encoder>
+							<pattern>%d{yyyy-MM-dd-HH.mm.ss}\t[%logger{0}.%method]\t%msg%n</pattern>
+						</encoder>
+						<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+							<fileNamePattern>${targetPathGLog}/BSMB_SYSOUT-%d{yyyyMMdd}.log</fileNamePattern>
+						</rollingPolicy>
+					</appender>
+					<root level="ERROR">
+						<appender-ref ref="log-desenvolvimento" />
+					</root>
+				<!-- END LOGGING IN A FILE -->		
+								
+				<!-- BEGIN LOGGING IN A CONSOLE -->
+					<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+						<encoder>
+							<pattern>%d{HH:mm:ss} [%method] %msg%n</pattern>
+						</encoder>
+					</appender>
+					<root level="ERROR">
+						<appender-ref ref="STDOUT" />
+					</root>
+				<!-- END LOGGING IN A CONSOLE -->
+			<!-- TODO MOCK REMOVER EM PRODUCAO -->	
+
+</configuration> 
